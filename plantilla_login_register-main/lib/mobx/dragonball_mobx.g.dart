@@ -41,6 +41,70 @@ mixin _$DragonBallMobX on DragonBallMobXBase, Store {
     });
   }
 
+  late final _$isLoadingCharactersAtom =
+      Atom(name: 'DragonBallMobXBase.isLoadingCharacters', context: context);
+
+  @override
+  bool get isLoadingCharacters {
+    _$isLoadingCharactersAtom.reportRead();
+    return super.isLoadingCharacters;
+  }
+
+  @override
+  set isLoadingCharacters(bool value) {
+    _$isLoadingCharactersAtom.reportWrite(value, super.isLoadingCharacters, () {
+      super.isLoadingCharacters = value;
+    });
+  }
+
+  late final _$isLoadingPlanetsAtom =
+      Atom(name: 'DragonBallMobXBase.isLoadingPlanets', context: context);
+
+  @override
+  bool get isLoadingPlanets {
+    _$isLoadingPlanetsAtom.reportRead();
+    return super.isLoadingPlanets;
+  }
+
+  @override
+  set isLoadingPlanets(bool value) {
+    _$isLoadingPlanetsAtom.reportWrite(value, super.isLoadingPlanets, () {
+      super.isLoadingPlanets = value;
+    });
+  }
+
+  late final _$isCardSwiperVisibleAtom =
+      Atom(name: 'DragonBallMobXBase.isCardSwiperVisible', context: context);
+
+  @override
+  bool get isCardSwiperVisible {
+    _$isCardSwiperVisibleAtom.reportRead();
+    return super.isCardSwiperVisible;
+  }
+
+  @override
+  set isCardSwiperVisible(bool value) {
+    _$isCardSwiperVisibleAtom.reportWrite(value, super.isCardSwiperVisible, () {
+      super.isCardSwiperVisible = value;
+    });
+  }
+
+  late final _$errorMessageAtom =
+      Atom(name: 'DragonBallMobXBase.errorMessage', context: context);
+
+  @override
+  String get errorMessage {
+    _$errorMessageAtom.reportRead();
+    return super.errorMessage;
+  }
+
+  @override
+  set errorMessage(String value) {
+    _$errorMessageAtom.reportWrite(value, super.errorMessage, () {
+      super.errorMessage = value;
+    });
+  }
+
   late final _$loadCharactersAsyncAction =
       AsyncAction('DragonBallMobXBase.loadCharacters', context: context);
 
@@ -57,11 +121,29 @@ mixin _$DragonBallMobX on DragonBallMobXBase, Store {
     return _$loadPlanetsAsyncAction.run(() => super.loadPlanets());
   }
 
+  late final _$DragonBallMobXBaseActionController =
+      ActionController(name: 'DragonBallMobXBase', context: context);
+
+  @override
+  void toggleCardSwiperVisibility() {
+    final _$actionInfo = _$DragonBallMobXBaseActionController.startAction(
+        name: 'DragonBallMobXBase.toggleCardSwiperVisibility');
+    try {
+      return super.toggleCardSwiperVisibility();
+    } finally {
+      _$DragonBallMobXBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
 characters: ${characters},
-planets: ${planets}
+planets: ${planets},
+isLoadingCharacters: ${isLoadingCharacters},
+isLoadingPlanets: ${isLoadingPlanets},
+isCardSwiperVisible: ${isCardSwiperVisible},
+errorMessage: ${errorMessage}
     ''';
   }
 }

@@ -1,63 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:mobx/mobx.dart'; // Importa MobX para usar Observer
-import 'package:flutter_mobx/flutter_mobx.dart'; // Para usar Observer con widgets
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:plantilla_login_register/mobx/dragonball_mobx.dart'; 
+import 'package:plantilla_login_register/models/models.dart';
+import 'package:plantilla_login_register/widgets/card_swiper.dart';  
 
-// Simulamos la clase DragonBallMobX
-class DragonBallMobX {
-  // Simulación de personajes y planetas
-  ObservableList<Character> characters = ObservableList<Character>();
-  ObservableList<Planet> planets = ObservableList<Planet>();
-
-  // Métodos de carga (simulados)
-  void loadCharacters() {
-    characters.addAll([
-      Character(name: "Goku"),
-      Character(name: "Vegeta"),
-      Character(name: "Piccolo"),
-    ]);
-  }
-
-  void loadPlanets() {
-    planets.addAll([
-      Planet(name: "Earth"),
-      Planet(name: "Namek"),
-      Planet(name: "Vegeta"),
-    ]);
-  }
-}
-
-// Modelos de personajes y planetas
-class Character {
-  final String name;
-  Character({required this.name});
-}
-
-class Planet {
-  final String name;
-  Planet({required this.name});
-}
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreen extends StatelessWidget {
   final dbStore = DragonBallMobX();
-  bool isCardSwiperVisible = false;
-
-  @override
-  void initState() {
-    super.initState();
-    dbStore.loadCharacters();
-    dbStore.loadPlanets();
-  }
 
   @override
   Widget build(BuildContext context) {
     final missatge = ModalRoute.of(context)!.settings.arguments as String;
+
+    // Llamar a los métodos para cargar los datos cuando se inicia la pantalla
+    dbStore.loadCharacters();
+    dbStore.loadPlanets();
 
     return Scaffold(
       appBar: AppBar(
@@ -67,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () {
-              // TODO: Agregar lógica de logout
+              // TODO: Lógica de logout
               Navigator.of(context).pushReplacementNamed('logOrReg');
             },
           ),
@@ -76,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          // Texto con mensaje
+          // Mensaje de bienvenida
           Text(
             missatge,
             style: TextStyle(
@@ -88,44 +44,69 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: 20),
 
-          // Botón que muestra el CardSwiper
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                isCardSwiperVisible = !isCardSwiperVisible;
-              });
+          // Botón para alternar visibilidad del CardSwiper
+          Observer(
+            builder: (_) {
+              return ElevatedButton(
+                onPressed: () {
+                  dbStore.toggleCardSwiperVisibility();  // Cambiar visibilidad
+                },
+                child: Text(dbStore.isCardSwiperVisible ? "Ocultar CardSwipers" : "Mostrar CardSwipers"),
+              );
             },
-            child: Text(isCardSwiperVisible ? "Ocultar CardSwiper" : "Mostrar CardSwiper"),
           ),
 
-          // Si isCardSwiperVisible es true, mostramos el CardSwiper
-          if (isCardSwiperVisible)
-            Expanded(
-              child: PageView(
-                children: [
-                  // Mostrar personajes
-                  Observer(
-                    builder: (_) => ListView(
-                      children: dbStore.characters
-                          .map((c) => Card(
-                                child: ListTile(title: Text(c.name)),
-                              ))
-                          .toList(),
+          // Mostrar el CardSwiper solo si está visible
+          Observer(
+            builder: (_) {
+              if (!dbStore.isCardSwiperVisible) {
+                return Container(); 
+              }
+
+              return Expanded(
+                child: Column(
+                  children: [
+                    // CardSwiper con personajes
+                    Observer(
+                      builder: (_) {
+                        if (dbStore.isLoadingCharacters) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        if (dbStore.characters.isEmpty) {
+                          return Center(child: Text('No hay personajes disponibles.'));
+                        }
+
+                        return CardSwiper<Character>(
+                          items: dbStore.characters,
+                          imageUrlBuilder: (character) => character.image,
+                          nameBuilder: (character) => character.name,
+                        );
+                      },
                     ),
-                  ),
-                  // Mostrar planetas
-                  Observer(
-                    builder: (_) => ListView(
-                      children: dbStore.planets
-                          .map((p) => Card(
-                                child: ListTile(title: Text(p.name)),
-                              ))
-                          .toList(),
+                    // CardSwiper con planetas
+                    Observer(
+                      builder: (_) {
+                        if (dbStore.isLoadingPlanets) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        if (dbStore.planets.isEmpty) {
+                          return Center(child: Text('No hay planetas disponibles.'));
+                        }
+
+                        return CardSwiper<Planets>(
+                          items: dbStore.planets,
+                          imageUrlBuilder: (planet) => planet.image,
+                          nameBuilder: (planet) => planet.name,
+                        );
+                      },
                     ),
-                  ),
-                ],
-              ),
-            ),
+                  ],
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
