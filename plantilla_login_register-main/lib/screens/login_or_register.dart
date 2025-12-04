@@ -17,12 +17,12 @@ class _LoginOrRegisterScreenState extends State<LoginOrRegisterScreen>
 
   RegExp emailRegExp =
       new RegExp(r'^\w+[\w-\.]*\@\w+((-\w+)|(\w*))\.[a-z]{2,3}$');
+
   RegExp contRegExp = new RegExp(r'^([1-zA-Z0-1@.\s]{1,255})$');
   String? _correu;
   String? _passwd;
   String missatge = '';
   bool _isChecked = false;
-
   bool _isLoading = false;
 
   initState() {
