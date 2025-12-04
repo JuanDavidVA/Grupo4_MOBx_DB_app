@@ -194,7 +194,7 @@ class _LoginOrRegisterScreenState extends State<LoginOrRegisterScreen>
         _isLoading = true;
       });
       // Aquí es realitzaria la petició de login a l'API o similar
-      missatge = 'Gràcies \n $_correu \n $_passwd';
+      missatge = 'Benvingut \n $_correu';
       setState(() {
         _isLoading = false;
       });
