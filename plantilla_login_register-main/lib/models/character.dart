@@ -12,7 +12,7 @@ class Character {
     String description;
     String image;
     String affiliation;
-    dynamic deletedAt;
+    dynamic deletedAt; //siempre es null esto
 
     Character({
         required this.id,
@@ -24,7 +24,7 @@ class Character {
         required this.description,
         required this.image,
         required this.affiliation,
-        required this.deletedAt,
+        this.deletedAt,
     });
 
     factory Character.fromRawJson(String str) => Character.fromJson(json.decode(str));
