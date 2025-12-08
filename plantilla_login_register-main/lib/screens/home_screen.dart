@@ -1,113 +1,127 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:plantilla_login_register/mobx/dragonball_mobx.dart'; 
+import 'package:plantilla_login_register/mobx/dragonball_mobx.dart';
 import 'package:plantilla_login_register/models/models.dart';
-import 'package:plantilla_login_register/widgets/card_swiper.dart';  
+import 'package:plantilla_login_register/widgets/card_swiper.dart';
 
 class HomeScreen extends StatelessWidget {
+  HomeScreen({Key? key}) : super(key: key);
+
   final dbStore = DragonBallMobX();
 
   @override
   Widget build(BuildContext context) {
-    final missatge = ModalRoute.of(context)!.settings.arguments as String;
+    // Email / texto que mandas desde el login
+    final missatge =
+        ModalRoute.of(context)!.settings.arguments as String? ?? '';
 
-    // Llamar a los métodos para cargar los datos cuando se inicia la pantalla
+    // Cargar datos (lo mantengo como lo tenías)
     dbStore.loadCharacters();
     dbStore.loadPlanets();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inici'),
+        title: const Text('Inici'),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () {
-              // TODO: Lógica de logout
               Navigator.of(context).pushReplacementNamed('logOrReg');
             },
           ),
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          // Mensaje de bienvenida
-          Text(
-            missatge,
-            style: TextStyle(
-              fontSize: 15.0,
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 20),
-
-          // Botón para alternar visibilidad del CardSwiper
-          Observer(
-            builder: (_) {
-              return ElevatedButton(
-                onPressed: () {
-                  dbStore.toggleCardSwiperVisibility();  // Cambiar visibilidad
-                },
-                child: Text(dbStore.isCardSwiperVisible ? "Ocultar CardSwipers" : "Mostrar CardSwipers"),
-              );
-            },
-          ),
-
-          // Mostrar el CardSwiper solo si está visible
-          Observer(
-            builder: (_) {
-              if (!dbStore.isCardSwiperVisible) {
-                return Container(); 
-              }
-
-              return Expanded(
-                child: Column(
-                  children: [
-                    // CardSwiper con personajes
-                    Observer(
-                      builder: (_) {
-                        if (dbStore.isLoadingCharacters) {
-                          return Center(child: CircularProgressIndicator());
-                        }
-
-                        if (dbStore.characters.isEmpty) {
-                          return Center(child: Text('No hay personajes disponibles.'));
-                        }
-
-                        return CardSwiper<Character>(
-                          items: dbStore.characters,
-                          imageUrlBuilder: (character) => character.image,
-                          nameBuilder: (character) => character.name,
-                        );
-                      },
-                    ),
-                    // CardSwiper con planetas
-                    Observer(
-                      builder: (_) {
-                        if (dbStore.isLoadingPlanets) {
-                          return Center(child: CircularProgressIndicator());
-                        }
-
-                        if (dbStore.planets.isEmpty) {
-                          return Center(child: Text('No hay planetas disponibles.'));
-                        }
-
-                        return CardSwiper<Planets>(
-                          items: dbStore.planets,
-                          imageUrlBuilder: (planet) => planet.image,
-                          nameBuilder: (planet) => planet.name,
-                        );
-                      },
-                    ),
-                  ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          // 👈 aquí está el cambio importante
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  'Benvingut',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-              );
-            },
+                const SizedBox(height: 4),
+                Text(
+                  missatge,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+
+                // Botón para mostrar/ocultar los CardSwiper
+                Observer(
+                  builder: (_) {
+                    return ElevatedButton(
+                      onPressed: dbStore.toggleCardSwiperVisibility,
+                      child: Text(
+                        dbStore.isCardSwiperVisible
+                            ? 'Ocultar CardSwipers'
+                            : 'Mostrar CardSwipers',
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 24),
+
+                // Contenido principal
+                Observer(
+                  builder: (_) {
+                    if (!dbStore.isCardSwiperVisible) {
+                      return const SizedBox.shrink();
+                    }
+
+                    if (dbStore.isLoadingCharacters ||
+                        dbStore.isLoadingPlanets) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (dbStore.errorMessage.isNotEmpty) {
+                      return Text(
+                        dbStore.errorMessage,
+                        style: const TextStyle(color: Colors.red),
+                        textAlign: TextAlign.center,
+                      );
+                    }
+
+                    return Column(
+                      children: [
+                        if (dbStore.characters.isNotEmpty) ...[
+                          CardSwiper<Character>(
+                            items: dbStore.characters.toList(),
+                            imageUrlBuilder: (c) => c.image,
+                            nameBuilder: (c) => c.name,
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                        if (dbStore.planets.isNotEmpty)
+                          CardSwiper<Planets>(
+                            items: dbStore.planets.toList(),
+                            imageUrlBuilder: (p) => p.image,
+                            nameBuilder: (p) => p.name,
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
