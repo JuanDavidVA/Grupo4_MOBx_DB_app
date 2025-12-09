@@ -11,11 +11,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Email / texto que mandas desde el login
     final missatge =
         ModalRoute.of(context)!.settings.arguments as String? ?? '';
 
-    // Cargar datos (lo mantengo como lo tenías)
     dbStore.loadCharacters();
     dbStore.loadPlanets();
 
@@ -34,7 +32,6 @@ class HomeScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          // 👈 aquí está el cambio importante
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             child: Column(
@@ -60,7 +57,6 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Botón para mostrar/ocultar los CardSwiper
                 Observer(
                   builder: (_) {
                     return ElevatedButton(
@@ -76,7 +72,6 @@ class HomeScreen extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                // Contenido principal
                 Observer(
                   builder: (_) {
                     if (!dbStore.isCardSwiperVisible) {
