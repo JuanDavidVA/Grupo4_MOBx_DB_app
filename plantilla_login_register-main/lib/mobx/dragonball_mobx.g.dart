@@ -136,6 +136,30 @@ mixin _$DragonBallMobX on DragonBallMobXBase, Store {
   }
 
   @override
+  TextFormField validateCorreu(
+      void Function(String?) onSavedCallback, RegExp emailRegExp) {
+    final _$actionInfo = _$DragonBallMobXBaseActionController.startAction(
+        name: 'DragonBallMobXBase.validateCorreu');
+    try {
+      return super.validateCorreu(onSavedCallback, emailRegExp);
+    } finally {
+      _$DragonBallMobXBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  TextFormField validateContrasenya(
+      void Function(String?) onSavedCallback, RegExp contRegExp) {
+    final _$actionInfo = _$DragonBallMobXBaseActionController.startAction(
+        name: 'DragonBallMobXBase.validateContrasenya');
+    try {
+      return super.validateContrasenya(onSavedCallback, contRegExp);
+    } finally {
+      _$DragonBallMobXBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 characters: ${characters},

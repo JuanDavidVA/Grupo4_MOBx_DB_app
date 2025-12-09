@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-
+import 'package:plantilla_login_register/mobx/dragonball_mobx.dart';
 class LoginOrRegisterScreen extends StatefulWidget {
   @override
   _LoginOrRegisterScreenState createState() => _LoginOrRegisterScreenState();
 }
+
+  final dbStore = DragonBallMobX();
+
 
 class _LoginOrRegisterScreenState extends State<LoginOrRegisterScreen>
     with SingleTickerProviderStateMixin {
@@ -114,50 +117,13 @@ class _LoginOrRegisterScreenState extends State<LoginOrRegisterScreen>
             key: _key,
             child: Column(
               children: <Widget>[
-                TextFormField(
-                  initialValue: '',
-                  validator: (text) {
-                    if (text!.length == 0) {
-                      return "Correu es obligatori";
-                    } else if (!emailRegExp.hasMatch(text)) {
-                      return "Format correu incorrecte";
-                    }
-                    return null;
-                  },
-                  keyboardType: TextInputType.emailAddress,
-                  maxLength: 50,
-                  textAlign: TextAlign.left,
-                  decoration: InputDecoration(
-                    hintText: 'Escrigui el seu correu',
-                    labelText: 'Correu',
-                    counterText: '',
-                    icon:
-                        Icon(Icons.email, size: 32.0, color: Colors.blue[800]),
-                  ),
-                  onSaved: (text) => _correu = text,
+                dbStore.validateCorreu(
+                  (value) => _correu = value,
+                  emailRegExp,
                 ),
-                TextFormField(
-                  initialValue: '',
-                  validator: (text) {
-                    if (text!.length == 0) {
-                      return "Contrasenya és obligatori";
-                    } else if (text.length <= 5) {
-                      return "Contrasenya mínim de 5 caràcters";
-                    } else if (!contRegExp.hasMatch(text)) {
-                      return "Contrasenya incorrecte";
-                    }
-                    return null;
-                  },
-                  keyboardType: TextInputType.text,
-                  maxLength: 20,
-                  textAlign: TextAlign.left,
-                  decoration: InputDecoration(
-                    hintText: 'Escrigui la contrasenya',
-                    labelText: 'Contrasenya',
-                    counterText: '',
-                    icon: Icon(Icons.lock, size: 32.0, color: Colors.blue[800]),
-                  ),
-                  onSaved: (text) => _passwd = text,
+                dbStore.validateContrasenya(
+                  (value) => _passwd = value,
+                  contRegExp,
                 ),
                 isLogin
                     ? CheckboxListTile(

@@ -24,7 +24,7 @@ class CardSwiper<T> extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(top: 30), // margen arriba
+      padding: const EdgeInsets.only(top: 30),
       child: SizedBox(
         width: double.infinity,
         height: size.height * 0.55,

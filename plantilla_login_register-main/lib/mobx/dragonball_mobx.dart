@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:http/http.dart' as http;
 import 'package:plantilla_login_register/models/models.dart';
@@ -89,5 +90,40 @@ abstract class DragonBallMobXBase with Store {
     }else{
       isCardSwiperVisible = false;
     }
+  }
+
+  @action
+  TextFormField validateCorreu(
+    void Function(String?) onSavedCallback, RegExp emailRegExp) {
+  return TextFormField(
+    validator: (text) {
+      if (text == null || text.isEmpty) return "Correu es obligatori";
+      if (!emailRegExp.hasMatch(text)) return "Format correu incorrecte";
+      return null;
+    },
+    onSaved: onSavedCallback,
+    decoration: InputDecoration(
+      labelText: 'Correu',
+      icon: Icon(Icons.email),
+    ),
+  );
+}
+
+  @action
+  TextFormField validateContrasenya(
+    void Function(String?) onSavedCallback, RegExp contRegExp) {
+  return TextFormField(
+    validator: (text) {
+      if (text == null || text.isEmpty) return "Contrasenya és obligatori";
+      if (text.length <= 5) return "Contrasenya mínim de 5 caràcters";
+      if (!contRegExp.hasMatch(text)) return "Contrasenya incorrecte";
+      return null;
+    },
+    onSaved: onSavedCallback,
+    decoration: InputDecoration(
+      labelText: 'Contrasenya',
+      icon: Icon(Icons.lock),
+    ),
+  );
   }
 }
